@@ -34,11 +34,7 @@ def create_the_file():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        # ssh_client.exec_command('cd ~/airflow; touch test.txt; ls -la')
-        # stdin, stdout, stderr = ssh_client.exec_command('cd /Users/kthomson/; touch test.txt; ls -la')
-        # stdin, stdout, stderr = ssh_client.exec_command('dir')
-        # stdin, stdout, stderr = ssh_client.exec_command('sas test5.sas')
-        stdin, stdout, stderr = ssh_client.exec_command('cd Documents/My SAS Files/9.4/  && sas Code/ccd_nonfiscal_state_test.sas')
+        stdin, stdout, stderr = ssh_client.exec_command('cd Documents/GitHub/ccdSAS/  && sas Code/ccd_nonfiscal_state - RE2.sas')
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
         print(out)
