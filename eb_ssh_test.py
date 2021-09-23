@@ -34,7 +34,7 @@ def create_the_file():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        stdin, stdout, stderr = ssh_client.exec_command("cd ..\..\users\ebuehler\Documents\GitHub\ccdSAS\SAS && sas ccd_nonfiscal_state_RE2")
+        stdin, stdout, stderr = ssh_client.exec_command(r"cd ..\..\users\ebuehler\Documents\GitHub\ccdSAS\SAS && sas ccd_nonfiscal_state_RE2")
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
         print(out)
