@@ -18,7 +18,7 @@ default_args = {
 }
 
 
-dag = DAG(dag_id='eb_ssh_test',
+dag = DAG(dag_id='download_ccd',
           default_args=default_args,
         #   schedule_interval='0,10,20,30,40,50 * * * *',
           dagrun_timeout=timedelta(seconds=120))
