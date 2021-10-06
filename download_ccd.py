@@ -32,6 +32,8 @@ def download_ccd_links():
     
     ssh_client = None
     try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
         ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_list_downloader.py")
     finally:
         if ssh_client:
@@ -46,6 +48,8 @@ def download_ccd_dat():
     
     ssh_client = None
     try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
         ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
     finally:
         if ssh_client:
