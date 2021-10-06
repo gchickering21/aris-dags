@@ -24,7 +24,7 @@ dag = DAG(dag_id='eb_ssh_test',
           dagrun_timeout=timedelta(seconds=120))
 
 
-def create_the_file():
+def download_ccd_links():
 
     # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
@@ -32,19 +32,37 @@ def create_the_file():
     
     ssh_client = None
     try:
-        ssh_client = ssh.get_conn()
-        ssh_client.load_system_host_keys()
-        stdin, stdout, stderr = ssh_client.exec_command(r"cd ..\..\users\ebuehler\Documents\GitHub\ccdSAS\SAS && sas ccd_nonfiscal_state_RE2")
-        out = stdout.read().decode().strip()
-        error = stderr.read().decode().strip()
-        print(out)
-        print(error)
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_list_downloader.py")
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
     finally:
         if ssh_client:
             ssh_client.close()
 
-call_ssh_task = PythonOperator(
-    task_id='call_ssh_task',
-    python_callable=create_the_file,
+
+def download_ccd_dat():
+
+    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    print(ssh)
+    
+    ssh_client = None
+    try:
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
+    finally:
+        if ssh_client:
+            ssh_client.close()
+
+
+download = PythonOperator(
+    task_id='download_ccd_dat',
+    python_callable=run_sas,
     dag=dag
 )
+
+download = PythonOperator(
+    task_id='download_ccd_links',
+    python_callable=run_sas,
+    dag=dag
+)
+
+download_ccd_dat >> download_ccd_links
