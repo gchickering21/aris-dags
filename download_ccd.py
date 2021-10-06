@@ -33,7 +33,6 @@ def download_ccd_links():
     ssh_client = None
     try:
         ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_list_downloader.py")
-        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
     finally:
         if ssh_client:
             ssh_client.close()
@@ -53,16 +52,17 @@ def download_ccd_dat():
             ssh_client.close()
 
 
-download = PythonOperator(
-    task_id='download_ccd_dat',
-    python_callable=run_sas,
+download_links = PythonOperator(
+    task_id='download_links',
+    python_callable=download_ccd_links,
     dag=dag
 )
 
-download = PythonOperator(
-    task_id='download_ccd_links',
-    python_callable=run_sas,
+download_dat = PythonOperator(
+    task_id='download_dat',
+    python_callable=download_ccd_dat,
     dag=dag
 )
 
-download_ccd_dat >> download_ccd_links
+
+download_dat >> download_links
