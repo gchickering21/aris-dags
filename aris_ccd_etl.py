@@ -4,7 +4,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
-
+from read_config import SERVICE_GIT_DIR
 
 default_args = {
     'owner': 'airflow',
@@ -34,7 +34,8 @@ def download_ccd_links():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_list_downloader.py")
+        command = 'python ' +  SERVICE_GIT_DIR + '\ccdSAS\ccd_data_list_downloader.py'
+        ssh_client.exec_command(command)
     finally:
         if ssh_client:
             ssh_client.close()
@@ -50,7 +51,8 @@ def download_ccd_dat():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
+        command = 'python ' +  SERVICE_GIT_DIR + 'ccdSAS\\ccd_data_downloader.py'
+        ssh_client.exec_command(command)
     finally:
         if ssh_client:
             ssh_client.close()
@@ -65,7 +67,8 @@ def run_sas():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        stdin, stdout, stderr = ssh_client.exec_command(r"cd ..\..\users\ebuehler\Documents\GitHub\ccdSAS\SAS && sas ccd_nonfiscal_state_RE2")
+        command = 'cd ' +  SERVICE_GIT_DIR + 'ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
+        stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
         print(out)
@@ -84,7 +87,8 @@ def db_load_mrt():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ARIS-DB\DB-Generation\write_mrt.py")
+        command = 'python ' +  SERVICE_GIT_DIR + 'ARIS-DB\\DB-Generation\\write_mrt.py'
+        ssh_client.exec_command(command)
     finally:
         if ssh_client:
             ssh_client.close()
