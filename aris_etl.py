@@ -18,11 +18,42 @@ default_args = {
 }
 
 
-dag = DAG(dag_id='eb_ssh_test',
+dag = DAG(dag_id='download_ccd',
           default_args=default_args,
         #   schedule_interval='0,10,20,30,40,50 * * * *',
           dagrun_timeout=timedelta(seconds=120))
 
+
+def download_ccd_links():
+
+    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    print(ssh)
+    
+    ssh_client = None
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_list_downloader.py")
+    finally:
+        if ssh_client:
+            ssh_client.close()
+
+
+def download_ccd_dat():
+
+    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    print(ssh)
+    
+    ssh_client = None
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ccdSAS\IO\ccd_data_downloader.py")
+    finally:
+        if ssh_client:
+            ssh_client.close()
 
 def run_sas():
 
@@ -43,41 +74,7 @@ def run_sas():
         if ssh_client:
             ssh_client.close()
 
-def error_lookup():
-    string1 = 'ERROR:'
-  
-    # opening a text file
-    file1 = open("..\..\users\ebuehler\Documents\GitHub\ccdSAS\Output\ccd_nonfiscal_state_2018_log.txt", "r")
-    
-    # read file content
-    readfile = file1.read()
-    
-    # checking condition for string found or not
-    if string1 in readfile: 
-        file1.close() 
-        return(True)
-    else: 
-        file1.close() 
-        return(False)
-
-def check_sas():
-
-    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
-    ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    print(ssh)
-    
-    ssh_client = None
-    try:
-        if error_lookup(): 
-            raise ValueError('Error found')
-        else: 
-            pass 
-            
-    finally:
-        if ssh_client:
-            ssh_client.close()
-
-def run_ccd_download():
+def db_load_mrt():
 
     # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
@@ -87,14 +84,22 @@ def run_ccd_download():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        stdin, stdout, stderr = ssh_client.exec_command(r"cd ..\..\users\ebuehler\Documents\GitHub\ccdSAS\SAS && sas ccd_nonfiscal_state_RE2")
-        out = stdout.read().decode().strip()
-        error = stderr.read().decode().strip()
-        print(out)
-        print(error)
+        ssh_client.exec_command(r"python C:\Users\ebuehler\Documents\GitHub\ARIS-DB\DB-Generation\write_mrt.py")
     finally:
         if ssh_client:
-            ssh_client.close()    
+            ssh_client.close()
+
+download_links = PythonOperator(
+    task_id='download_links',
+    python_callable=download_ccd_links,
+    dag=dag
+)
+
+download_dat = PythonOperator(
+    task_id='download_dat',
+    python_callable=download_ccd_dat,
+    dag=dag
+)
 
 call_sas = PythonOperator(
     task_id='call_sas',
@@ -102,10 +107,12 @@ call_sas = PythonOperator(
     dag=dag
 )
 
-check_runs = PythonOperator(
-    task_id='check_runs',
-    python_callable=check_sas,
+db_load = PythonOperator(
+    task_id='db_load',
+    python_callable=db_load_mrt,
     dag=dag
 )
 
-call_sas 
+#TODO: add checks 
+
+download_dat >> download_links >> call_sas >> db_load
