@@ -26,7 +26,7 @@ dag = DAG(dag_id='aris_ccd_etl',
 
 def download_ccd_links():
 
-    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     print(ssh)
     
@@ -43,7 +43,7 @@ def download_ccd_links():
 
 def download_ccd_dat():
 
-    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     print(ssh)
     
@@ -59,7 +59,7 @@ def download_ccd_dat():
 
 def run_sas():
 
-    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     print(ssh)
     
@@ -79,7 +79,7 @@ def run_sas():
 
 def db_load_mrt():
 
-    # ssh = SSHHook(remote_host = '172.29.6.4', username='kthomson', password='***', port = 22)
+    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     print(ssh)
     
@@ -119,4 +119,4 @@ db_load = PythonOperator(
 
 #TODO: add checks 
 
-download_dat >> download_links >> call_sas >> db_load
+download_links >> download_dat >> call_sas >> db_load
