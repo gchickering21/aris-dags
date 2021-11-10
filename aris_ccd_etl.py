@@ -28,7 +28,6 @@ def download_ccd_links():
 
     
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    print(ssh)
     
     ssh_client = None
     try:
@@ -92,6 +91,8 @@ def db_load_mrt():
     finally:
         if ssh_client:
             ssh_client.close()
+
+
 
 download_links = PythonOperator(
     task_id='download_links',
