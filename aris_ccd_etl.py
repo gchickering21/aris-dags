@@ -34,7 +34,7 @@ def download_ccd_links():
         ##'cd' +  SERVICE_GIT_DIR + ' && python ' + ' \\ccdSAS\\ccd_data_list_downloader.py' 
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + ' && echo This is a sample text file > sample.txt' 
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' + ' \\ccdSAS\\ccd_data_list_downloader.py' 
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
@@ -51,7 +51,7 @@ def download_ccd_dat():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\ccd_data_downloader.py'
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\ccd_data_downloader.py'
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
@@ -67,7 +67,7 @@ def run_sas():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + 'ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -87,7 +87,7 @@ def db_load_mrt():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\SAS\\DB-Generation\\write_mrt.py'
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\SAS\\DB-Generation\\write_mrt.py'
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
