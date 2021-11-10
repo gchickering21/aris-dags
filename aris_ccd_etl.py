@@ -4,7 +4,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
-SERVICE_GIT_DIR = 'C:\ARIS'
+SERVICE_GIT_DIR = 'C:\\ARIS'
 
 default_args = {
     'owner': 'airflow',
@@ -33,7 +33,7 @@ def download_ccd_links():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'python ' +  SERVICE_GIT_DIR + '\ccdSAS\ccd_data_list_downloader.py'
+        command = 'python ' +  SERVICE_GIT_DIR + '\\ccdSAS\\ccd_data_list_downloader.py'
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
@@ -86,7 +86,7 @@ def db_load_mrt():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'python ' +  SERVICE_GIT_DIR + 'ARIS-DB\\DB-Generation\\write_mrt.py'
+        command = 'python ' +  SERVICE_GIT_DIR + 'ccdSAS\\SAS\\DB-Generation\\write_mrt.py'
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
