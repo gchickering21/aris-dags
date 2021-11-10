@@ -4,7 +4,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
-from read_config import SERVICE_GIT_DIR
+SERVICE_GIT_DIR = 'C:\ARIS'
 
 default_args = {
     'owner': 'airflow',
