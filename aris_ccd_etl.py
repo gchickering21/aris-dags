@@ -31,9 +31,10 @@ def download_ccd_links():
     
     ssh_client = None
     try:
+        ##'cd' +  SERVICE_GIT_DIR + ' && python ' + ' \\ccdSAS\\ccd_data_list_downloader.py' 
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd' +  SERVICE_GIT_DIR + ' && python ' + ' \\ccdSAS\\ccd_data_list_downloader.py'
+        command = 'cd' +  SERVICE_GIT_DIR + ' && echo This is a sample text file > sample.txt' 
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
@@ -120,4 +121,4 @@ db_load = PythonOperator(
 
 #TODO: add checks 
 
-download_links >> download_dat >> call_sas >> db_load
+download_links # >> download_dat >> call_sas >> db_load
