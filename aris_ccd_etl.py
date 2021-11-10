@@ -121,4 +121,4 @@ db_load = PythonOperator(
 
 #TODO: add checks 
 
-download_links #>> download_dat >> call_sas >> db_load
+download_links >> download_dat >> call_sas >> db_load
