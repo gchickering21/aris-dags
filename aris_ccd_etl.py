@@ -72,20 +72,20 @@ def run_sas():
         if ssh_client:
             ssh_client.close()
 
-# def db_load_mrt():
+def db_load_mrt():
 
     
-#     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-#     ssh_client = None
-#     print(ssh)
-#     try:
-#         ssh_client = ssh.get_conn()
-#         ssh_client.load_system_host_keys()
-#         command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\DB-Generation\\write_mrt.py'
-#         ssh_client.exec_command(command)
-#     finally:
-#         if ssh_client:
-#             ssh_client.close()
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    ssh_client = None
+    print(ssh)
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\DB-Generation\\write_mrt.py'
+        ssh_client.exec_command(command)
+    finally:
+        if ssh_client:
+            ssh_client.close()
 
 
 
@@ -107,12 +107,12 @@ call_sas = PythonOperator(
     dag=dag
 )
 
-# db_load = PythonOperator(
-#     task_id='db_load',
-#     python_callable=db_load_mrt,
-#     dag=dag
-# )
+db_load = PythonOperator(
+    task_id='db_load',
+    python_callable=db_load_mrt,
+    dag=dag
+)
 
 #TODO: add checks 
 
-download_links >> download_dat >> call_sas #>> db_load
+download_links >> download_dat >> call_sas >> db_load
