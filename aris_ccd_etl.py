@@ -25,11 +25,9 @@ dag = DAG(dag_id='aris_ccd_etl',
 
 
 def download_ccd_links():
-
-    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    
     ssh_client = None
+    print(ssh)
     try:
         ##'cd' +  SERVICE_GIT_DIR + ' && python ' + ' \\ccdSAS\\ccd_data_list_downloader.py' 
         ssh_client = ssh.get_conn()
@@ -42,12 +40,9 @@ def download_ccd_links():
 
 
 def download_ccd_dat():
-
-    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    print(ssh)
-    
     ssh_client = None
+    print(ssh)
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
@@ -58,22 +53,18 @@ def download_ccd_dat():
             ssh_client.close()
 
 def run_sas():
-
-    
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    print(ssh)
-    
     ssh_client = None
+    print(ssh)
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
         command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
         stdin, stdout, stderr = ssh_client.exec_command(command)
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        # out = stdout.read().decode().strip()
-        # error = stderr.read().decode().strip()
-        # print(out)
-        # print(error)
+        out = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        print(out)
+        print(error)
     finally:
         if ssh_client:
             ssh_client.close()
@@ -82,9 +73,8 @@ def db_load_mrt():
 
     
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-    print(ssh)
-    
     ssh_client = None
+    print(ssh)
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
