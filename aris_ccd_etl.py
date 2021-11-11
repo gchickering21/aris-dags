@@ -59,13 +59,14 @@ def run_sas():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && echo hello world > hello.txt'
-        # command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        out = stdout.read().decode().strip()
-        error = stderr.read().decode().strip()
-        print(out)
-        print(error)
+        # command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && echo hello world > hello.txt'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
+        ssh_client.exec_command(command)
+        #stdin, stdout, stderr = ssh_client.exec_command(command)
+        #out = stdout.read().decode().strip()
+        #error = stderr.read().decode().strip()
+        #print(out)
+        #print(error)
     finally:
         if ssh_client:
             ssh_client.close()
