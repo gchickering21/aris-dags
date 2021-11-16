@@ -88,6 +88,21 @@ def db_load_mrt():
         if ssh_client:
             ssh_client.close()
 
+def gen_hrt_xl():
+
+    
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    ssh_client = None
+    print(ssh)
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && . venv/Scripts/activate && python gen_hrt.py -t 203.10 --xlsx_dir C:/ARIS/ccdSAS/HRT/HRT --xlsx-only' 
+        ssh_client.exec_command(command)
+    finally:
+        if ssh_client:
+            ssh_client.close()
+
 
 
 download_links = PythonOperator(
@@ -114,6 +129,12 @@ db_load = PythonOperator(
     dag=dag
 )
 
+gen_hrt = PythonOperator(
+    task_id='gen_hrt',
+    python_callable=gen_hrt_xl,
+    dag=dag
+)
+
 #TODO: add checks 
 
-download_links >> download_dat >> call_sas >> db_load
+download_links >> download_dat >> call_sas >> db_load >> gen_hrt
