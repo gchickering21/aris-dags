@@ -21,7 +21,7 @@ default_args = {
 dag = DAG(dag_id='aris_ccd_etl',
           default_args=default_args,
         #   schedule_interval='0,10,20,30,40,50 * * * *',
-          dagrun_timeout=timedelta(seconds=300))
+          dagrun_timeout=timedelta(seconds=600))
 
 
 def download_ccd_links():
