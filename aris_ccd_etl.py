@@ -33,7 +33,11 @@ def download_ccd_links():
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
         command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' + 'ccdSAS\\IO\\ccd_data_list_downloader.py' 
-        ssh_client.exec_command(command)
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        out = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        print(out)
+        print(error)
     finally:
         if ssh_client:
             ssh_client.close()
@@ -48,12 +52,16 @@ def download_ccd_dat():
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
         command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\IO\\ccd_data_downloader.py'
-        ssh_client.exec_command(command)
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        out = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        print(out)
+        print(error)
     finally:
         if ssh_client:
             ssh_client.close()
 
-def run_sas():
+def ccd_nonfiscal():
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     ssh_client = None
     print(ssh)
@@ -61,6 +69,23 @@ def run_sas():
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
         command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        out = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        print(out)
+        print(error)
+    finally:
+        if ssh_client:
+            ssh_client.close()
+
+def ccd_fiscal():
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    ssh_client = None
+    print(ssh)
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_fiscal_state'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -90,20 +115,20 @@ def db_load_mrt():
         if ssh_client:
             ssh_client.close()
 
-# def gen_hrt_xl():
+def gen_hrt_xl():
 
     
-#     ssh = SSHHook(ssh_conn_id="sas1buehlere")
-#     ssh_client = None
-#     print(ssh)
-#     try:
-#         ssh_client = ssh.get_conn()
-#         ssh_client.load_system_host_keys()
-#         command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && .\\venv\\Scripts\\activate && python gen_hrt.py -t 203.10 --xlsx_dir C:\\ARIS\\ccdSAS\\HRT\\HRT --xlsx-only' 
-#         ssh_client.exec_command(command)
-#     finally:
-#         if ssh_client:
-#             ssh_client.close()
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    ssh_client = None
+    print(ssh)
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && .\\venv\\Scripts\\activate && python gen_hrt.py -t 203.10 --xlsx_dir C:\\ARIS\\ccdSAS\\HRT\\HRT --xlsx-only' 
+        ssh_client.exec_command(command)
+    finally:
+        if ssh_client:
+            ssh_client.close()
 
 
 
@@ -119,9 +144,15 @@ download_dat = PythonOperator(
     dag=dag
 )
 
-call_sas = PythonOperator(
-    task_id='call_sas',
-    python_callable=run_sas,
+gen_nonfiscal = PythonOperator(
+    task_id='ccd_fiscal',
+    python_callable=ccd_nonfiscal,
+    dag=dag
+)
+
+gen_fiscal = PythonOperator(
+    task_id='ccd_fiscal',
+    python_callable=ccd_fiscal,
     dag=dag
 )
 
@@ -139,4 +170,4 @@ db_load = PythonOperator(
 
 #TODO: add checks 
 
-download_links >> download_dat >> call_sas >> db_load #>> gen_hrt
+download_links >> download_dat >> gen_nonfiscal >> gen_fiscal >> db_load #>> gen_hrt
