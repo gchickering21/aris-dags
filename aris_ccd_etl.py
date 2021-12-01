@@ -145,7 +145,7 @@ download_dat = PythonOperator(
 )
 
 gen_nonfiscal = PythonOperator(
-    task_id='ccd_fiscal',
+    task_id='ccd_nonfiscal',
     python_callable=ccd_nonfiscal,
     dag=dag
 )
