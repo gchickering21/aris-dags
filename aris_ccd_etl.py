@@ -24,7 +24,7 @@ dag = DAG(dag_id='aris_ccd_etl',
           dagrun_timeout=timedelta(seconds=36000))
 
 
-def download_ccd_links():
+def ccd_links():
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     ssh_client = None
     print(ssh)
@@ -43,7 +43,7 @@ def download_ccd_links():
             ssh_client.close()
 
 
-def download_ccd_dat():
+def ccd_dat():
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
     ssh_client = None
     print(ssh)
@@ -115,7 +115,7 @@ def db_load_mrt():
         if ssh_client:
             ssh_client.close()
 
-def gen_hrt_xl():
+def hrt():
 
     
     ssh = SSHHook(ssh_conn_id="sas1buehlere")
@@ -124,7 +124,7 @@ def gen_hrt_xl():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && .\\venv\\Scripts\\activate && python gen_hrt.py -t 203.10 --xlsx_dir C:\\ARIS\\ccdSAS\\HRT\\HRT --xlsx-only' 
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && python gen_hrt.py -t 203.10 --xlsx_dir HRT' 
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
@@ -134,13 +134,13 @@ def gen_hrt_xl():
 
 download_links = PythonOperator(
     task_id='download_links',
-    python_callable=download_ccd_links,
+    python_callable=ccd_links,
     dag=dag
 )
 
 download_dat = PythonOperator(
     task_id='download_dat',
-    python_callable=download_ccd_dat,
+    python_callable=ccd_dat,
     dag=dag
 )
 
@@ -162,12 +162,12 @@ db_load = PythonOperator(
     dag=dag
 )
 
-# gen_hrt = PythonOperator(
-#     task_id='gen_hrt',
-#     python_callable=gen_hrt_xl,
-#     dag=dag
-# )
+gen_hrt = PythonOperator(
+    task_id='gen_hrt',
+    python_callable=hrt,
+    dag=dag
+)
 
 #TODO: add checks 
 
-download_links >> download_dat >> gen_nonfiscal >> gen_fiscal >> db_load #>> gen_hrt
+download_links >> download_dat >> gen_nonfiscal >> gen_fiscal >> db_load >> gen_hrt
