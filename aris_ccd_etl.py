@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 import airflow
 from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
+from airflow.operators.python_operator import BranchPythonOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
 SERVICE_GIT_DIR = 'C:\\ARIS' # File housing ARIS repos on SAS server's C drive
@@ -178,6 +179,12 @@ download_dat = PythonOperator(
     dag=dag
 )
 
+# allow for branch
+branching = BranchPythonOperator(
+    task_id='branching', dag=dag,
+    python_callable=lambda: 'branch_a'
+)
+
 # Generate Nonfiscal from CCD Data with SAS
 gen_nonfiscal = PythonOperator(
     task_id='gen_nonfiscal',
@@ -214,6 +221,6 @@ gen_hrt = PythonOperator(
 )
 
 # DAG Dependancy
-download_links >> download_dat 
-download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt
-download_dat >> gen_fiscal
+download_links >> download_dat >> branching
+branching >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt
+branching >> gen_fiscal
