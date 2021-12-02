@@ -19,7 +19,7 @@ default_args = {
 }
 
 # Define Main DAG for CCD pipeline 
-dag = DAG(dag_id='aris_etl',
+dag = DAG(dag_id='aris_ccd_etl',
           default_args=default_args,
         #   schedule_interval='0,10,20,30,40,50 * * * *',
           dagrun_timeout=timedelta(seconds=600))
