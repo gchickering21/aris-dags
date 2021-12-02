@@ -216,4 +216,4 @@ gen_hrt = PythonOperator(
 # DAG Dependancy
 download_links >> download_dat 
 download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt
-gen_fiscal
+download_dat >> gen_fiscal
