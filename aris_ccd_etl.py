@@ -108,6 +108,27 @@ def nonfiscal_wide():
         if ssh_client:
             ssh_client.close()
 
+
+def nonfiscal_school(): 
+    '''
+    Purpose: execute ccd_school_convert.sas on command line to generate nonfiscal wide data from nonfiscal long data. 
+    '''
+    ssh = SSHHook(ssh_conn_id="sas1buehlere")
+    ssh_client = None
+    print(ssh)
+    try:
+        ssh_client = ssh.get_conn()
+        ssh_client.load_system_host_keys()
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas non_fiscal_school'
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        out = stdout.read().decode().strip()
+        error = stderr.read().decode().strip()
+        print(out)
+        print(error)
+    finally:
+        if ssh_client:
+            ssh_client.close()
+
 def fiscal():
     '''
     Purpose: execute ccd_fiscal_state.sas on command line to generate fiscal data from ccd data. 
@@ -180,7 +201,7 @@ download_dat = PythonOperator(
 )
 
 
-# Generate Nonfiscal from CCD Data with SAS
+# Generate Nonfiscal state from CCD Data with SAS
 gen_nonfiscal = PythonOperator(
     task_id='gen_nonfiscal',
     python_callable=nonfiscal,
@@ -191,6 +212,13 @@ gen_nonfiscal = PythonOperator(
 gen_nonfiscal_wide = PythonOperator(
     task_id='gen_nonfiscal_wide',
     python_callable=nonfiscal_wide,
+    dag=dag
+)
+
+# Generate Nonfiscal school from CCD Data with SAS
+gen_nonfiscal_school = PythonOperator(
+    task_id='gen_nonfiscal_school',
+    python_callable=nonfiscal_school,
     dag=dag
 )
 
@@ -217,5 +245,5 @@ gen_hrt = PythonOperator(
 
 # DAG Dependancy
 download_links >> download_dat 
-download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt
+download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt >> gen_nonfiscal_school
 download_dat >> gen_fiscal
