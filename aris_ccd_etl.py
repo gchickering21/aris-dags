@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
-SERVICE_GIT_DIR = 'C:\\ARIS' # File housing ARIS repos on SAS server's C drive
+SERVICE_GIT_DIR = 'C:\\ARIS\\ccdSAS' # File housing ARIS repos on SAS server's C drive
 
 # default args
 default_args = {
@@ -36,7 +36,7 @@ def links():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' + 'ccdSAS\\IO\\ccd_data_list_downloader.py' 
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' + '\\IO\\ccd_data_list_downloader.py' 
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -78,7 +78,7 @@ def nonfiscal():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas ccd_nonfiscal_state_RE2'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -98,7 +98,7 @@ def nonfiscal_wide():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_school_convert'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas ccd_school_convert'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -119,7 +119,7 @@ def nonfiscal_school():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas non_fiscal_school'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas non_fiscal_school'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -139,7 +139,7 @@ def fiscal():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\SAS' + ' && sas ccd_fiscal_state'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas ccd_fiscal_state'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -159,7 +159,7 @@ def mrt():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\DB-Generation' + ' && python write_mrt.py' 
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\DB-Generation' + ' && python write_mrt.py' 
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -179,7 +179,7 @@ def hrt():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\ccdSAS\\HRT' + ' && python gen_hrt.py -t 203.10 --xlsx_dir HRT' 
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\HRT' + ' && python gen_hrt.py -t 203.10 --xlsx_dir HRT' 
         ssh_client.exec_command(command)
     finally:
         if ssh_client:
