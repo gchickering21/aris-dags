@@ -119,7 +119,7 @@ def nonfiscal_school():
     try:
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas non_fiscal_school'
+        command = 'cd ' +  SERVICE_GIT_DIR + '\\SAS' + ' && sas ccd_nonfiscal_school'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
@@ -245,5 +245,5 @@ gen_hrt = PythonOperator(
 
 # DAG Dependancy
 download_links >> download_dat 
-download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> load_mrt >> gen_hrt >> gen_nonfiscal_school
+download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> gen_nonfiscal_school >> load_mrt >> gen_hrt 
 download_dat >> gen_fiscal
