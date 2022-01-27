@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.operators.python_operator import BranchPythonOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
-SERVICE_GIT_DIR = 'C:\\ARIS\\ccdSAS\\ccd' # File housing ARIS repos on SAS server's C drive
+SERVICE_GIT_DIR = 'C:\\ARIS\\autoDigest\\ccd' # File housing ARIS repos on SAS server's C drive
 
 # default args
 default_args = {
@@ -58,7 +58,7 @@ def dat():
         
         ssh_client = ssh.get_conn()
         ssh_client.load_system_host_keys()
-        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'ccdSAS\\IO\\ccd_data_downloader.py'
+        command = 'cd ' +  SERVICE_GIT_DIR + ' && python ' +  'IO\\ccd_data_downloader.py'
         stdin, stdout, stderr = ssh_client.exec_command(command)
         out = stdout.read().decode().strip()
         error = stderr.read().decode().strip()
