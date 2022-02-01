@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+from pickle import TRUE
 import airflow
 from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
@@ -12,7 +13,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'email': ['ebuehler@air.org', 'mtrihn@air.org'],
-    'email_on_failure': False,
+    'email_on_failure': TRUE,
     'email_on_retry': False,
     'start_date': datetime.now() - timedelta(minutes=20),
     'retries': 0,
@@ -36,7 +37,7 @@ class code_executer:
         return self.__command
 
     @command.setter
-    def excel(self, dir, command):
+    def command(self, dir, command):
         set_dir = 'cd ' +  dir
         action = ' && ' + command
         self.__command = set_dir + action 
