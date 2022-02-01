@@ -37,9 +37,9 @@ class code_executer:
         return self.__command
 
     @command.setter
-    def command(self, dir, command):
-        set_dir = 'cd ' +  dir
-        action = ' && ' + command
+    def command(self):
+        set_dir = 'cd ' +  self.dir
+        action = ' && ' + self.command
         self.__command = set_dir + action 
 
         ssh = SSHHook(ssh_conn_id="sas1buehlere")
