@@ -30,7 +30,7 @@ dag = DAG(dag_id='aris_ipeds_etl',
 class code_executer:
     def __init__(self, service_dir, file_ex, sub_dir):
         self.dir = service_dir
-        self.command =  'cd {service_dir}\\{sub_dir} && {file_ex}' 
+        self.command =  f'cd {service_dir}\\{sub_dir} && {file_ex}' 
         self.type = type 
 
     def execute_command(self): 
