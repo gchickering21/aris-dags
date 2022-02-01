@@ -1,4 +1,5 @@
 from datetime import timedelta, datetime
+from pickle import TRUE
 import airflow
 from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
@@ -11,8 +12,8 @@ SERVICE_GIT_DIR = 'C:\\ARIS\\autoDigest\\ccd' # File housing ARIS repos on SAS s
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email': ['airflow@example.com'],
-    'email_on_failure': False,
+    'email': ['ebuehler@air.org', 'mtrihn@air.org'],
+    'email_on_failure': TRUE,
     'email_on_retry': False,
     'start_date': datetime.now() - timedelta(minutes=20),
     'retries': 0,
