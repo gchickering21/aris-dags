@@ -40,9 +40,7 @@ class code_executer:
     def command(self):
         set_dir = 'cd ' +  self.dir
         action = ' && ' + self.command
-        self.__command = set_dir + action 
-
-        ssh = SSHHook(ssh_conn_id="sas1buehlere")
+        self.__command = set_dir + action
 
 
     def execute_command(self): 
