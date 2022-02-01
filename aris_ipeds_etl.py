@@ -30,18 +30,7 @@ dag = DAG(dag_id='aris_ipeds_etl',
 class code_executer:
     def __init__(self, service_dir, file_ex):
         self.dir = service_dir
-        self.__command =  service_dir, file_ex
-
-    @property
-    def command(self):
-        return self.__command
-
-    @command.setter
-    def command(self, service_dir, file_ex):
-        set_dir = 'cd ' +  service_dir
-        action = ' && ' + file_ex
-        self.__command = set_dir + action
-
+        self.command =  'cd ' +  service_dir +  ' && ' + file_ex
 
     def execute_command(self): 
         ssh = SSHHook(ssh_conn_id="sas1buehlere")
