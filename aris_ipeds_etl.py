@@ -28,9 +28,10 @@ dag = DAG(dag_id='aris_ipeds_etl',
 
 
 class code_executer:
-    def __init__(self, service_dir, file_ex):
+    def __init__(self, service_dir, file_ex, sub_dir):
         self.dir = service_dir
-        self.command =  'cd ' +  service_dir +  ' && ' + file_ex
+        self.command =  'cd {service_dir}\\{sub_dir} && {file_ex}' 
+        self.type = type 
 
     def execute_command(self): 
         ssh = SSHHook(ssh_conn_id="sas1buehlere")
@@ -53,7 +54,7 @@ def t318():
     '''
     Purpose: execute t318 SAS code 
     '''
-    exe = code_executer(SERVICE_GIT_DIR, 'sas t318-40-IPEDS-C2019-C2020-D21-MRT_2021_09_14')
+    exe = code_executer(SERVICE_GIT_DIR , 'sas t318-40-IPEDS-C2019-C2020-D21-MRT_2021_09_14', 'sas')
     exe.execute_command() 
 
 
