@@ -65,7 +65,7 @@ def t318():
     '''
     Purpose: execute t318 SAS code 
     '''
-    exe = code_executer(SERVICE_GIT_DIR, 'sas ccd_nonfiscal_state_RE2')
+    exe = code_executer(SERVICE_GIT_DIR, 'sas t318-40-IPEDS-C2019-C2020-D21-MRT_2021_09_14')
     exe.execute_command() 
 
 
