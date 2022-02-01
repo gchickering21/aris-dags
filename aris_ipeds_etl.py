@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from pickle import TRUE
+from pickle import FALSE, TRUE
 import airflow
 from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
@@ -12,8 +12,8 @@ SERVICE_GIT_DIR = 'C:\\ARIS\\autoDigest\\ipeds' # File housing ARIS repos on SAS
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email': ['ebuehler@air.org', 'mtrihn@air.org'],
-    'email_on_failure': TRUE,
+    'email': ['ebuehler@air.org'],
+    'email_on_failure': FALSE,
     'email_on_retry': False,
     'start_date': datetime.now() - timedelta(minutes=20),
     'retries': 0,
@@ -28,18 +28,18 @@ dag = DAG(dag_id='aris_ipeds_etl',
 
 
 class code_executer:
-    def __init__(self, service_dir, command):
+    def __init__(self, service_dir, file_ex):
         self.dir = service_dir
-        self.command = command
+        self.command = service_dir, file_ex
 
     @property
     def command(self):
         return self.__command
 
     @command.setter
-    def command(self):
-        set_dir = 'cd ' +  self.dir
-        action = ' && ' + self.command
+    def command(self, service_dir, file_ex):
+        set_dir = 'cd ' +  service_dir
+        action = ' && ' + file_ex
         self.__command = set_dir + action
 
 
