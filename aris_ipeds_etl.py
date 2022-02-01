@@ -30,7 +30,7 @@ dag = DAG(dag_id='aris_ipeds_etl',
 class code_executer:
     def __init__(self, service_dir, file_ex):
         self.dir = service_dir
-        self.command = service_dir, file_ex
+        self.__command =  service_dir, file_ex
 
     @property
     def command(self):
