@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime
 from pickle import TRUE
 import airflow
+import code_executer
 from airflow import DAG
 from airflow.operators.python import PythonOperator, PythonVirtualenvOperator
 from airflow.operators.python_operator import BranchPythonOperator
@@ -150,6 +151,22 @@ def fiscal():
         if ssh_client:
             ssh_client.close()
 
+
+def district_convert():
+    '''
+    Purpose: execute t318 SAS code 
+    '''
+    exe = code_executer(SERVICE_GIT_DIR , 'sas ccd_district_convert', 'sas')
+    exe.execute_command() 
+
+def nonfiscal_district():
+    '''
+    Purpose: execute t318 SAS code 
+    '''
+    exe = code_executer(SERVICE_GIT_DIR , 'sas ccd_nonfiscal_district', 'sas')
+    exe.execute_command() 
+
+
 def mrt():
     '''
     Purpose: execute write_mrt.py on command line to generate mrt from nonfiscal long and write to database. 
@@ -185,6 +202,10 @@ def hrt():
     finally:
         if ssh_client:
             ssh_client.close()
+
+
+
+
 
 
 # Download CCD Links 
@@ -223,6 +244,20 @@ gen_nonfiscal_school = PythonOperator(
     dag=dag
 )
 
+# Generate Nonfiscal district from CCD Data with SAS
+gen_nonfiscal_district = PythonOperator(
+    task_id='gen_nonfiscal_district',
+    python_callable=nonfiscal_district,
+    dag=dag
+)
+
+# Generate Nonfiscal district from CCD Data with SAS
+gen_district_wide = PythonOperator(
+    task_id='gen_district_wide',
+    python_callable=district_convert,
+    dag=dag
+)
+
 # Generate Fiscal Data from CCD Data with SAS
 gen_fiscal = PythonOperator(
     task_id='gen_fiscal',
@@ -247,4 +282,5 @@ gen_hrt = PythonOperator(
 # DAG Dependancy
 download_links >> download_dat 
 download_dat >> gen_nonfiscal >> gen_nonfiscal_wide >> gen_nonfiscal_school >> load_mrt >> gen_hrt 
+download_dat >> gen_nonfiscal_district >> gen_district_wide
 download_dat >> gen_fiscal
